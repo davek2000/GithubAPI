@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0d81e1fd5387a274f280d0be095686cfd1c6f43f6c9bba32d51b31601247a7b1
+-- hash: 002f50767bcd27918d5c1a9407cfe73c71651741ea94f5e917a6800371ee51dc
 
 name:           GithubAPI
 version:        0.1.0.0
@@ -27,13 +27,21 @@ source-repository head
 
 library
   exposed-modules:
+      GitHub
       Lib
   other-modules:
       Paths_GithubAPI
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , http-client
+    , http-client-tls
+    , servant
+    , servant-client
+    , text
+    , utf8-string
   default-language: Haskell2010
 
 executable GithubAPI-exe
@@ -45,7 +53,14 @@ executable GithubAPI-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       GithubAPI
+    , aeson
     , base >=4.7 && <5
+    , http-client
+    , http-client-tls
+    , servant
+    , servant-client
+    , text
+    , utf8-string
   default-language: Haskell2010
 
 test-suite GithubAPI-test
@@ -58,5 +73,12 @@ test-suite GithubAPI-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       GithubAPI
+    , aeson
     , base >=4.7 && <5
+    , http-client
+    , http-client-tls
+    , servant
+    , servant-client
+    , text
+    , utf8-string
   default-language: Haskell2010

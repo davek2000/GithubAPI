@@ -19,8 +19,17 @@ extra-source-files:
 # common to point users to the README.md file.
 description:         Please see the README on GitHub at <https://github.com/githubuser/GithubAPI#readme>
 
+# Added dependencies from github-get found at https://github.com/esjmb/github-get/blob/main/package.yaml
+
 dependencies:
 - base >= 4.7 && < 5
+- aeson
+- text
+- servant
+- servant-client
+- http-client
+- http-client-tls
+- utf8-string
 
 library:
   source-dirs: src
