@@ -21,11 +21,17 @@ import           Network.HTTP.Client        (newManager)
 import           Network.HTTP.Client.TLS    (tlsManagerSettings)
 import           Data.Text hiding (map,intercalate)
 import           Data.List (intercalate)
+import           System.Environment         (getArgs)
+
 
 someFunc :: IO ()
 someFunc = do
     putStrLn "Attempting to call GitHub"
-    testGitHubCall "octocat"
+    
+    (fName:_) <- getArgs
+    putStrLn $ "Name from command line is " ++fName
+    testGitHubCall $ pack fName
+
     putStrLn "finished"
 
 testGitHubCall :: Text -> IO ()
@@ -44,7 +50,7 @@ testGitHubCall name =
            putStrLn $ "WE GOT AN ERROR OBTAINING REPO DATA " ++ show err
           Right res' -> do
            putStrLn $ "User's repos are: \n" ++
-             intercalate ", \n" (map (\(GH.GitHubRepos a b c ) ->"Repo name: " ++ show a ++ ", \t \t Stargazer Count: " ++ show b ++ ", \t HTML_URL: " ++ show c) res')
+            intercalate ", \n" (map (\(GH.GitHubRepos a b c ) ->"Repo name: " ++ show a ++ ", \t \t Stargazer Count: " ++ show b ++ ", \t \t HTML_URL: " ++ show c) res')
 
 
 
