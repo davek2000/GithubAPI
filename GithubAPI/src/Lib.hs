@@ -31,9 +31,9 @@ testGitHubCall=
     (SC.runClientM (GH.test (Just "retrieving GitHub API data ") "phadej") =<< env) >>= \case
 
         Left err -> do
-         putStrLn $ "heuston, we have a problem: " ++ show err
+         putStrLn $ "WE GOT AN ERROR :( " ++ show err
         Right res -> do
-         putStrLn $ "the votes of the github jury are " ++ show res
+         putStrLn $ "We got data: " ++ show res
 
 
     where env :: IO SC.ClientEnv
