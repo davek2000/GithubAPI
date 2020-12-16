@@ -28,7 +28,7 @@ someFunc = do
 testGitHubCall :: IO ()
 
 testGitHubCall=
-    (SC.runClientM (GH.test (Just "retrieving GitHub API data ") "davek2000") =<< env) >>= \case
+    (SC.runClientM (GH.test (Just "retrieving GitHub API data ") "phadej") =<< env) >>= \case
 
         Left err -> do
          putStrLn $ "heuston, we have a problem: " ++ show err
