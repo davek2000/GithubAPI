@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators     #-}
+{-# LANGUAGE DuplicateRecordFields     #-}
 
 
 module GitHub where 
@@ -23,16 +24,26 @@ data GitHubUser =
     GitHubUser { login :: Text ,
                  name :: Maybe Text,
                  company :: Maybe Text,
-                 email :: Maybe Text              } deriving (Generic, FromJSON, Show)
+                 email :: Maybe Text
+                 } 
+                 deriving (Generic, FromJSON, Show)
+
+data GitHubRepos =
+    GitHubRepos {full_name :: Text,
+                 stargazers_count :: Integer,
+                 html_url :: Text
+                 }
+                 deriving (Generic, FromJSON, Show)
 
 type GitHubAPI = "users" :> Header "user-agent" UserAgent
                          :> Capture "username" Username :> Get '[JSON] GitHubUser
-            :<|> "test2" :> Get '[JSON] Text
+            :<|> "users" :> Header "user-agent" UserAgent
+                         :> Capture "username" Username :> "repos" :> Get '[JSON] [GitHubRepos]
 
 gitHubAPI :: Proxy GitHubAPI
 gitHubAPI = Proxy
 
-test :: Maybe UserAgent -> Username -> ClientM GitHubUser
-test2 :: ClientM Text
+getUser :: Maybe UserAgent -> Username -> ClientM GitHubUser
+getUserRepos ::Maybe UserAgent -> Username -> ClientM [GitHubRepos]
 
-test :<|> test2 = client gitHubAPI
+getUser :<|> getUserRepos = client gitHubAPI
