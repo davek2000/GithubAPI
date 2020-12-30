@@ -65,27 +65,40 @@ var text=svg.selectAll("text")		//returns empty as no text element in svg
                 .attr("fill","white")
                 .attr("font-size","24"); */
 
-    const canvas = d3.select(".canvas");
-    
-    var dataArray=[3,13,27];
-    
-    const svg = canvas.append("svg")
-                .attr("width",800)
-                .attr("height",800);
-    
-    const rect = svg.append("rect");
-    const rect2 = svg.append("rect");
-    const rect3 = svg.append("rect");
+const canvas = d3.select(".canvas");
 
-    const allRectangles = svg.selectAll("rect");
+var dataArray=[3,13,27];
 
-    allRectangles.attr("width",24)
-        .attr("height",100)
-        .attr("fill","orange")
-        .data(dataArray)
-        .attr("x",function(d, i) {return i * 100;})     //X-values = 0,100,200
-        .attr("height",function(d) {console.log(d); return d*10;});     //d==3, 0th element of dataArray (i==0)
-    
+const svg = canvas.append("svg")
+            .attr("width",800)
+            .attr("height",800);
+
+const rect=svg.selectAll("rect")
+               
+rect.data(dataArray)
+    .enter().append("rect")
+    .attr("fill","orange")
+    .attr("width",24)
+    .attr("height",function(d) {return d*3;})
+    .attr("x",function(d,i) {return i*25;})
+    .attr("y",function(d,i) {return 100 - (d*3)});
+
+
+
+
+
+
+/*const rect2 = svg.append("rect");
+const rect3 = svg.append("rect");
+
+const allRectangles = svg.selectAll("rect");
+allRectangles.attr("width",24)
+    .attr("height",100)
+    .attr("fill","orange")
+    .data(dataArray)
+    .attr("x",function(d, i) {return i * 30;})     //X-values = 0,100,200
+    .attr("height",function(d) {console.log(d); return d*10;})     //d==3, 0th element of dataArray (i==0)
+    .attr("y",function(d, i) {return 300-(d*10);}) */
     
 
     
