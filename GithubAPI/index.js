@@ -67,25 +67,40 @@ var text=svg.selectAll("text")		//returns empty as no text element in svg
 
 const canvas = d3.select(".canvas");
 
-var dataArray=[3,13,27];
+var dataArray=[3,13,27,45,12,26,62,0,50];
+var dataArray=[
+     {width: 25, height: 4, fill:"pink"},
+     {width: 25, height: 14, fill:"orange"},
+     {width: 25, height: 44, fill:"red"},
+     {width: 25, height: 124, fill:"green"},
+     {width: 25, height: 12, fill:"black"},
+];
 
 const svg = canvas.append("svg")
             .attr("width",800)
             .attr("height",800);
 
 const rect=svg.selectAll("rect")
+
+var max = d3.max(dataArray,function(d) {return d.width;})
+console.log(max);
+console.log(dataArray);
                
 rect.data(dataArray)
     .enter().append("rect")
-    .attr("fill","orange")
-    .attr("width",24)
-    .attr("height",function(d) {return d*3;})
-    .attr("x",function(d,i) {return i*25;})
-    .attr("y",function(d,i) {return 100 - (d*3)});
+    .attr("fill",function(d){return d.fill;})                                  //Colour  
+    .attr("width",function(d){return d.width;})                                    //Width of the bar
+    .attr("height",function(d) {return d.height*3;})                   //Height of the bar
+    .attr("x",function(d,i) {return i*(d.width+max);})                 //Gaps between bars
+    .attr("y",function(d) {return 500 - (d.height*3);});             //How far down the page - height
 
 
 
+d3.json('https://api.github.com/users/torvalds')
+.then(data => {
+     console.log(data);
 
+})
 
 
 /*const rect2 = svg.append("rect");
