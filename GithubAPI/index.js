@@ -78,29 +78,48 @@ var dataArray=[
 
 const svg = canvas.append("svg")
             .attr("width",800)
-            .attr("height",800);
+            .attr("height",1000);
 
-const rect=svg.selectAll("rect")
+const rect=svg.selectAll("rect");
 
-var max = d3.max(dataArray,function(d) {return d.width;})
-console.log(max);
-console.log(dataArray);
+//var max = d3.max(dataArray,function(d) {return d.width;})
+//console.log(max);
+//console.log(dataArray);
                
-rect.data(dataArray)
+/*rect.data(dataArray)
     .enter().append("rect")
     .attr("fill",function(d){return d.fill;})                                  //Colour  
     .attr("width",function(d){return d.width;})                                    //Width of the bar
     .attr("height",function(d) {return d.height*3;})                   //Height of the bar
     .attr("x",function(d,i) {return i*(d.width+max);})                 //Gaps between bars
     .attr("y",function(d) {return 500 - (d.height*3);});             //How far down the page - height
+*/
 
-
-
-d3.json('https://api.github.com/users/torvalds')
+//var test;
+d3.json('https://api.github.com/users/torvalds/repos')
 .then(data => {
-     console.log(data);
-
+     //console.log(data.name);
+     var stargazersCount =d3.map(data,function(d) {return d.stargazers_count;});
+     var test=d3.map(data,function(d) {return d.html_url;});
+     //console.log(stargazersCount);
+     //console.log(test);
+     for(i=0;i<stargazersCount.length;i++)
+     {
+          console.log("Stargazers for "+test[i]+" is "+stargazersCount[i]);
+     }
+     
+     rect.data(data)
+    .enter().append("rect")
+    //.attr("fill",function(d){return d.fill;})                                  //Colour  
+    .attr("fill","red")
+    //.attr("width",function(d){return d.width;})                                    //Width of the bar
+    .attr("width",24)
+    //.attr("height",function(d) {return d.height*3;})                   //Height of the bar
+    .attr("height",function(d){return d.stargazers_count})
+    .attr("x",function(d,i) {return i*30;})                 //Gaps between bars
+    .attr("y",function(d) {return 1000 - (d.stargazers_count);});
 })
+
 
 
 /*const rect2 = svg.append("rect");
