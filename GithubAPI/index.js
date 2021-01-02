@@ -1,4 +1,7 @@
 //javascript
+console.log("Working...");
+// !!-- CODE FOR SCALABLE BARCHART --!! //
+
 /*var dataset=[87,630,562,690,370,420,700,500];
 var dataset=[1,2,3,4,3,2,1,1,10];
 
@@ -32,9 +35,14 @@ var text=svg.selectAll("text")		//returns empty as no text element in svg
      .text(function(d) {return d;})
      .attr("y",function(d,i) { return svgHeight-d-2; })
      .attr("x",function(d,i) { return barWidth * i; })
-     .attr("fill", "red");	*/
+     .attr("fill", "red"); */	
 
-    /*d3.select("h1")
+//-------------------------------------------------------------------------//
+// <!-- FIRST WORK WITH D3 --!> //
+// <!-- DRAWS A BLACK BOX, WHITE CIRCLE AND PRINTS "Hello there!" --!> //
+        
+
+     /*d3.select("h1")
     .style('color', "red");
 
     const canvas=d3.select(".canvas");
@@ -64,8 +72,9 @@ var text=svg.selectAll("text")		//returns empty as no text element in svg
                 .attr("y","150")
                 .attr("fill","white")
                 .attr("font-size","24"); */
-
-const canvas = d3.select(".canvas");
+//-------------------------------------------------------------------------------------//
+// <!-- BARCHART USING DATA IN JSON ARRAY FORMAT --!>
+/*const canvas = d3.select(".canvas");
 
 var dataArray=[3,13,27,45,12,26,62,0,50];
 var dataArray=[
@@ -75,18 +84,18 @@ var dataArray=[
      {width: 25, height: 124, fill:"green"},
      {width: 25, height: 12, fill:"black"},
 ];
-
+var svgHeight=1000;
 const svg = canvas.append("svg")
             .attr("width",800)
-            .attr("height",1000);
+            .attr("height",svgHeight);
 
 const rect=svg.selectAll("rect");
 
-//var max = d3.max(dataArray,function(d) {return d.width;})
-//console.log(max);
-//console.log(dataArray);
+var max = d3.max(dataArray,function(d) {return d.width;})
+console.log(max);
+console.log(dataArray);
                
-/*rect.data(dataArray)
+rect.data(dataArray)
     .enter().append("rect")
     .attr("fill",function(d){return d.fill;})                                  //Colour  
     .attr("width",function(d){return d.width;})                                    //Width of the bar
@@ -94,45 +103,32 @@ const rect=svg.selectAll("rect");
     .attr("x",function(d,i) {return i*(d.width+max);})                 //Gaps between bars
     .attr("y",function(d) {return 500 - (d.height*3);});             //How far down the page - height
 */
-
-//var test;
+//---------------------------------------------------------------------------------------------------------------------//
+const canvas = d3.select(".canvas");
+var svgHeight=1000;
+const svg = canvas.append("svg")
+            .attr("width",800)
+            .attr("height",svgHeight);
+const rect=svg.selectAll("rect");
 d3.json('https://api.github.com/users/torvalds/repos')
 .then(data => {
      //console.log(data.name);
+
      var stargazersCount =d3.map(data,function(d) {return d.stargazers_count;});
      var test=d3.map(data,function(d) {return d.html_url;});
-     //console.log(stargazersCount);
-     //console.log(test);
+     console.log(stargazersCount);
+     console.log(test);
      for(i=0;i<stargazersCount.length;i++)
      {
           console.log("Stargazers for "+test[i]+" is "+stargazersCount[i]);
      }
      
      rect.data(data)
-    .enter().append("rect")
-    //.attr("fill",function(d){return d.fill;})                                  //Colour  
-    .attr("fill","red")
-    //.attr("width",function(d){return d.width;})                                    //Width of the bar
-    .attr("width",24)
-    //.attr("height",function(d) {return d.height*3;})                   //Height of the bar
-    .attr("height",function(d){return d.stargazers_count})
-    .attr("x",function(d,i) {return i*30;})                 //Gaps between bars
-    .attr("y",function(d) {return 1000 - (d.stargazers_count);});
-})
+          .enter().append("rect")                                  
+          .attr("fill","red")                                   
+          .attr("width",24)
+          .attr("height",function(d) {return d.stargazers_count;})                   //Height of the bar
+          .attr("x",function(d,i) {return i*30;})                 //Gaps between bars
+          .attr("y",function(d) {return svgHeight - d.stargazers_count;});
 
-
-
-/*const rect2 = svg.append("rect");
-const rect3 = svg.append("rect");
-
-const allRectangles = svg.selectAll("rect");
-allRectangles.attr("width",24)
-    .attr("height",100)
-    .attr("fill","orange")
-    .data(dataArray)
-    .attr("x",function(d, i) {return i * 30;})     //X-values = 0,100,200
-    .attr("height",function(d) {console.log(d); return d*10;})     //d==3, 0th element of dataArray (i==0)
-    .attr("y",function(d, i) {return 300-(d*10);}) */
-    
-
-    
+})      
