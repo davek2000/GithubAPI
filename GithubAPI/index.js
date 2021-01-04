@@ -105,16 +105,16 @@ rect.data(dataArray)
 */
 //---------------------------------------------------------------------------------------------------------------------//
 const canvas = d3.select(".canvas");
-var svgHeight=400;
+var svgHeight=1160;
 const svg = canvas.append("svg")
-            .attr("width",2060)
+            .attr("width","100%")
             .attr("height",800);
 const svg2 = canvas.append("svg")
-                   .attr("width",2060)
+                   .attr("width","100%")
                    .attr("height",svgHeight);
 
 const svg3 = canvas.append("svg")
-                   .attr("width",2060)
+                   .attr("width","100%")
                    .attr("height",15);
 const repos=svg.selectAll("text.title");
 const rect=svg2.selectAll("rect");
@@ -155,22 +155,20 @@ d3.json("https://api.github.com/users/mbostock/repos?per_page=65", {
                .attr("x",function(d,i) { return 300*(i%3); })
                .attr("fill", "black");
 
-          var barNumber=10;
-          var page=1;
-
           var y =d3.scaleLinear()
-                   .domain([0,100])
-                   .range([0,300])
+                   .domain([0,d3.max(data,function(d) {return d.stargazers_count;})])
+                   .range([0,600])
 
-          var viewData=data.slice((page-1)*barNumber,page*barNumber);
           rect.data(data)
                .enter().append("rect")                                  
                .attr("fill","red")                                   
                .attr("width",14)
-               .attr("height",function(d) {return d.stargazers_count;})                   //Height of the bar
+               .attr("height",function(d) {return y(d.stargazers_count);})                   //Height of the bar
                .attr("x",function(d,i) {return i*35;})                                    //Gaps between bars
-               .attr("y",function(d) {return (svgHeight - d.stargazers_count);});
-               //.attr("y",function(d) {return 300-y(d);})
+               .attr("y",function(d) {return (svgHeight - y(d.stargazers_count));})
+               .append("title")
+               .text((item) => { return item.name;})
+
 
           count.data(data)
                .enter().append("text")
@@ -179,56 +177,6 @@ d3.json("https://api.github.com/users/mbostock/repos?per_page=65", {
                .attr("y",function(d,i) { return 15; })
                .attr("x",function(d,i) { return i*35; })
                .attr("fill", "black");
+
 });
 
-
-
-/*d3.json("https://api.github.com/users/torvalds/repos", {})
-     .then(data => {
-          console.log(data.name);
-
-          var stargazersCount =d3.map(data,function(d) {return d.stargazers_count;});
-          var test=d3.map(data,function(d) {return d.html_url;});
-          console.log(stargazersCount);
-          console.log(test);
-          for(i=0;i<stargazersCount.length;i++)
-          {
-               console.log("Stargazers for "+test[i]+" is "+stargazersCount[i]);
-          }
-
-          repos.data(data)
-               .enter().append("text")
-               .text(function(d) {return d.name;})
-               .attr("class","value")
-               .attr("y",function(d,i) { return (50 * (Math.floor(i/3))+20); })
-               .attr("x",function(d,i) { return 300*(i%3); })
-               .attr("fill", "black");
-
-          var barNumber=10;
-          var page=1;
-
-          var y =d3.scaleLinear()
-                   .domain([0,100])
-                   .range([0,300])
-
-          var viewData=data.slice((page-1)*barNumber,page*barNumber);
-          rect.data(data)
-               .enter().append("rect")                                  
-               .attr("fill","red")                                   
-               .attr("width",24)
-               .attr("height",function(d) {return d.stargazers_count;})                   //Height of the bar
-               .attr("x",function(d,i) {return i*50;})                                    //Gaps between bars
-               .attr("y",function(d) {return 700 - d.stargazers_count;});
-               //.attr("y",function(d) {return 300-y(d);})
-
-          count.data(data)
-               .enter().append("text")
-               .text(function(d) {return d.stargazers_count;})
-               .attr("class","title")
-               .attr("y",function(d,i) { return 720; })
-               .attr("x",function(d,i) { return i*50; })
-               .attr("fill", "black");
-
-
-
-})       */
