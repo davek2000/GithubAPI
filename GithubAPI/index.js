@@ -105,10 +105,10 @@ rect.data(dataArray)
 */
 //---------------------------------------------------------------------------------------------------------------------//
 const canvas = d3.select(".canvas");
-var svgHeight=1160;
-const svg = canvas.append("svg")
+var svgHeight=500;
+const svg1 = canvas.append("svg")
             .attr("width","100%")
-            .attr("height",800);
+            .attr("height",100);
 const svg2 = canvas.append("svg")
                    .attr("width","100%")
                    .attr("height",svgHeight);
@@ -116,7 +116,7 @@ const svg2 = canvas.append("svg")
 const svg3 = canvas.append("svg")
                    .attr("width","100%")
                    .attr("height",15);
-const repos=svg.selectAll("text.title");
+const repos=svg1.selectAll("text.title");
 const rect=svg2.selectAll("rect");
 const count=svg3.selectAll("text.count");
 
@@ -133,19 +133,13 @@ fetch("https://api.github.com/users/mbostock/repos", {
   else console.log(response);
 })
   
-d3.json("https://api.github.com/users/mbostock/repos?per_page=65", {
+d3.json("https://api.github.com/users/torvalds/repos?per_page=101", {
      headers: new Headers({
        "Authorization": `Basic ${(`${login}:${password}`)}`
      }),
    }).then(data => { 
      var stargazersCount =d3.map(data,function(d) {return d.stargazers_count;});
      var test=d3.map(data,function(d) {return d.html_url;});
-          console.log(stargazersCount);
-          console.log(test);
-          for(i=0;i<stargazersCount.length;i++)
-          {
-               console.log("Stargazers for "+test[i]+" is "+stargazersCount[i]);
-          }
 
           repos.data(data)
                .enter().append("text")
@@ -163,20 +157,162 @@ d3.json("https://api.github.com/users/mbostock/repos?per_page=65", {
                .enter().append("rect")                                  
                .attr("fill","red")                                   
                .attr("width",14)
-               .attr("height",function(d) {return y(d.stargazers_count);})                   //Height of the bar
-               .attr("x",function(d,i) {return i*35;})                                    //Gaps between bars
+               .attr("height",function(d) {return y(d.stargazers_count);})                     // Height of the bar
+               .attr("x",function(d,i) {return i*70;})                                         // Gaps between bars
                .attr("y",function(d) {return (svgHeight - y(d.stargazers_count));})
                .append("title")
                .text((item) => { return item.name;})
-
 
           count.data(data)
                .enter().append("text")
                .text(function(d) {return d.stargazers_count;})
                .attr("class","title")
                .attr("y",function(d,i) { return 15; })
-               .attr("x",function(d,i) { return i*35; })
+               .attr("x",function(d,i) { return i*70; })
                .attr("fill", "black");
 
 });
 
+d3.json("https://api.github.com/repos/torvalds/libdc-for-dirk/contributors?per_page=65", {
+     headers: new Headers({
+       "Authorization": `Basic ${(`${login}:${password}`)}`
+     }),
+   }).then(data2 => {
+        var contributions = d3.map(data2,function(d) {return d.contributions;});
+        var login = d3.map(data2,function(d) {return d.login;});
+        console.log(contributions);
+        console.log(login);
+        console.log(data2);
+        
+        // https://codepen.io/zakariachowdhury/pen/OWdyjq
+        var text = "";
+        
+        var width = 200;
+        var height = 200;
+        var thickness = 40;
+        var duration = 750;
+        var padding = 10;
+        var opacity = .8;
+        var opacityHover = 1;
+        var otherOpacityOnHover = .8;
+        var tooltipMargin = 13;
+        
+        var radius = Math.min(width-padding, height-padding) / 2;
+        var color = d3.scaleOrdinal(d3.schemeCategory10);
+        
+        var svg = d3.select("#chart")
+        .append('svg')
+        .attr('class', 'pie')
+        .attr('width', width)
+        .attr('height', height);
+        var g = svg.append('g')
+        .attr('transform', 'translate(' + (width/2) + ',' + (height/2) + ')');
+        
+        var arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius);
+        
+        var pie = d3.pie()
+        .value(function(d) { return d.contributions; })
+        .sort(null);
+        
+        var path = g.selectAll('path')
+          .data(pie(data2))
+          .enter()
+          .append("g")  
+          .append('path')
+          .attr('d', arc)
+          .attr('fill', (d,i) => color(i))
+          .style('opacity', opacity)
+          .style('stroke', 'white')
+          .on("mouseover", function(d) {
+              d3.selectAll('path')
+                .style("opacity", otherOpacityOnHover);
+              d3.select(this) 
+                .style("opacity", opacityHover);
+        
+              let g = d3.select("svg")
+                .style("cursor", "pointer")
+                .append("g")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+         
+              g.append("text")
+                .attr("class", "name-text")
+                .text(`${d.login} (${d.contributions})`)
+                .attr('text-anchor', 'middle');
+            
+              let text = g.select("text");
+              let bbox = text.node().getBBox();
+              let padding = 2;
+              g.insert("rect", "text")
+                .attr("x", bbox.x - padding)
+                .attr("y", bbox.y - padding)
+                .attr("width", bbox.width + (padding*2))
+                .attr("height", bbox.height + (padding*2))
+                .style("fill", "white")
+                .style("opacity", 0.75);
+            })
+          .on("mousemove", function(d) {
+                let mousePosition = d3.pointer(event);
+                let x = mousePosition[0] + width/2;
+                let y = mousePosition[1] + height/2 - tooltipMargin;
+            
+                let text = d3.select('.tooltip text');
+                let bbox = text.node().getBBox();
+                if(x - bbox.width/2 < 0) {
+                  x = bbox.width/2;
+                }
+                else if(width - x - bbox.width/2 < 0) {
+                  x = width - bbox.width/2;
+                }
+            
+                if(y - bbox.height/2 < 0) {
+                  y = bbox.height + tooltipMargin * 2;
+                }
+                else if(height - y - bbox.height/2 < 0) {
+                  y = height - bbox.height/2;
+                }
+            
+                d3.select('.tooltip')
+                  .style("opacity", 1)
+                  .attr('transform',`translate(${x}, ${y})`);
+            })
+          .on("mouseout", function(d) {   
+              d3.select("svg")
+                .style("cursor", "none")  
+                .select(".tooltip").remove();
+            d3.selectAll('path')
+                .style("opacity", opacity);
+            })
+          .on("touchstart", function(d) {
+              d3.select("svg")
+                .style("cursor", "none");    
+          })
+          .each(function(d, i) { this._current = i; });
+        
+        let legend = d3.select("#chart").append('div')
+                       .attr('class', 'legend')
+                       .style('margin-top', '30px');
+        
+        let keys = legend.selectAll('.key')
+                       .data(data2)
+                       .enter().append('div')
+                       .attr('class', 'key')
+                       .style('display', 'flex')
+                       .style('align-items', 'center')
+                       .style('margin-right', '20px');
+        
+                  keys.append('div')
+                       .attr('class', 'symbol')
+                       .style('height', '10px')
+                       .style('width', '10px')
+                       .style('margin', '5px 5px')
+                       .style('background-color', (d, i) => color(i));
+        
+                  keys.append('div')
+                       .attr('class', 'name')
+                       .text(d => `${d.login} (${d.contributions})`);
+        
+                  keys.exit().remove();
+   });
