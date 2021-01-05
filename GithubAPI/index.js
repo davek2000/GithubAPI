@@ -108,6 +108,7 @@ const canvas = d3.select(".canvas");
 var svgHeight=1000;
 var svgWidth=1000;
 var leftMargin=150;
+var repoTitle = canvas.append("p")
 const svg1 = canvas.append("svg")
             .attr("width","100%")
             .attr("height","400");
@@ -115,26 +116,15 @@ const svg2 = canvas.append("svg")
                    .attr("width",svgWidth)
                    .attr("height",svgHeight);
 
-const svg3 = canvas.append("svg")
-                   .attr("width","100%")
-                   .attr("height",20);
+
 const repos=svg1.selectAll("text.title");
 var rect=svg2.selectAll("rect");
-const count=svg3.selectAll("text.count");
 
 var circleLink="https://api.github.com/repos/mbostock/";
 
 
 login="davek2000";
 password="PASSWORD";
-
-fetch("https://api.github.com/users/torvalds/repos", {
-  headers: new Headers({
-    "Authorization": `Basic ${(`${login}:${password}`)}`
-  }),
-}).then(response => {
-  if (!response.ok) throw new Error(response.status);
-})
   
 d3.json("https://api.github.com/users/mbostock/repos?per_page=65", {
      headers: new Headers({
@@ -151,8 +141,6 @@ d3.json("https://api.github.com/users/mbostock/repos?per_page=65", {
                .attr("x",function(d,i) { return 300*(i%5); })
                .attr("fill", "black");
 
-          
-
           var stars = data.map(function(d) { return d.stargazers_count;});
 
           var names = data.map(function(d) {return d.name;});
@@ -160,7 +148,11 @@ d3.json("https://api.github.com/users/mbostock/repos?per_page=65", {
           var scale = d3.scaleLinear()
                        .domain([d3.min(stars), d3.max(stars)])
                        .range([leftMargin, svgWidth - 100]);
-           
+          svg2.append("text")
+              .attr("x",500)
+              .attr("y",40)
+              .style("text-anchor","middle")
+              .text("Stargazer count for each of mbostock repos")
          // Add scales to axis
           var x_axis = d3.axisBottom()
                         .scale(scale);
@@ -193,17 +185,14 @@ d3.json("https://api.github.com/users/mbostock/repos?per_page=65", {
                  }
                  else return "red";
                })                                   
-               .attr("width",function(d) {console.log(d.stargazers_count); return y(d.stargazers_count);})
+               .attr("width",function(d) {return y(d.stargazers_count);})
                .attr("height",function(d,i) {return 6;})                     // Height of the bar
                .attr("x",function(d,i) {return leftMargin+1;})                                         // Gaps between bars
                .attr("y",function(d,i) {return i*16;})
                .append("title")
                .text((item) => `Stargazer count for ${item.name} is ${item.stargazers_count}`);
-               
-
-          svg2.append("g")
-              .on("mouseover",function() {console.log("Hello");});
 });
+
 circleLink+="stack/contributors?per_page=100";
 d3.json(circleLink, {
      headers: new Headers({
@@ -230,13 +219,19 @@ d3.json(circleLink, {
         var color = d3.scaleOrdinal(d3.schemeCategory10);
         
         var svg = d3.select("#chart")
+                    .append("text")
+                    .attr("x",500)
+                    .attr("y",40)
+                    .style("text-anchor","middle")
+                    .text("Breakdown of contributions to stack repo")
+
         .append('svg')
         .attr('class', 'pie')
         .attr('width', width)
         .attr('height', height);
         var g = svg.append('g')
         .attr('transform', 'translate(' + (width/2) + ',' + (height/2) + ')');
-        
+
         var arc = d3.arc()
         .innerRadius(0)
         .outerRadius(radius);
@@ -322,7 +317,7 @@ d3.json(circleLink, {
         
         let legend = d3.select("#chart").append('div')
                        .attr('class', 'legend')
-                       .style('margin-top', '30px');
+                       .style('margin-top', '50px');
         
         let keys = legend.selectAll('.key')
                        .data(data2)
